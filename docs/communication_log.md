@@ -241,3 +241,39 @@ A: PVE 优先，架构预留 PVP 接口。
 - Task 13: 设置主场景、提交文档、推送到 GitHub — commit 31b0b44
 
 共 12 个 commit，24 个源文件，已全部推送到 GitHub。
+
+---
+
+### [用户]
+打开 Godot 报错没有主场景
+
+### [助手]
+发现 project.godot 中 Godot 自动插入了无效 UID `run/main_scene="uid://b1yq5x8ntest"`。同时修复了 enums.gd、test_data.gd、stat_data.gd、element_chart.gd 缺少 `extends RefCounted` 的问题，以及 .tscn 格式错误。— commit bc75eb0
+
+---
+
+### [用户]
+UI 所有内容都在左上方
+
+### [助手]
+重写 UI 布局：加入 MarginContainer（20px 边距）、敌方/我方标题标签、所有 HBoxContainer 居中对齐、单位卡片改为 VBoxContainer 纵向排列、进度条设最小尺寸。修复 @onready 节点路径（新增 MarginContainer 层级）。— commit debc4ac
+
+---
+
+### [用户]
+只有一个角色，造出 4v4
+
+### [助手]
+补充测试角色数据至 4v4：
+- 我方：战士(火/攻击)、守护者(火/防御)、祭司(风/辅助)、巨人(风/体力)
+- 敌方：史莱姆(水/体力)、哥布林(风/攻击)、骷髅兵(火/防御)、暗影法师(暗/攻击)
+- 新增技能：水压冲击、岩碎、大地震击、暗影弹
+- 更新 battle_scene.gd 启动 4v4 — commit e29628a
+
+---
+
+### [用户]
+记得更新对话和文档相关的，明天继续
+
+### [助手]
+更新沟通记录，同步文档。当日工作结束，明日继续调试和完善战斗系统。
