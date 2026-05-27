@@ -1,4 +1,5 @@
 class_name StatData
+extends RefCounted
 
 const STAT_NAMES: Dictionary = {
 	Enums.StatType.HP: "HP",

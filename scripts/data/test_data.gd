@@ -1,4 +1,5 @@
 class_name TestData
+extends RefCounted
 
 static func create_atk_up_buff() -> BuffData:
 	var buff := BuffData.new()

@@ -1,4 +1,5 @@
 class_name Enums
+extends RefCounted
 
 enum Element { FIRE, WATER, WIND, LIGHT, DARK }
 

@@ -1,4 +1,5 @@
 class_name ElementChart
+extends RefCounted
 
 const _ADVANTAGE: Dictionary = {
 	Enums.Element.FIRE: Enums.Element.WIND,
