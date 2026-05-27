@@ -10,7 +10,8 @@ config_version=5
 
 [application]
 
-config/name="回合制"
+config/name="MXS"
+config/main_scene="res://scenes/battle/battle_scene.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
