@@ -216,3 +216,28 @@ A: PVE 优先，架构预留 PVP 接口。
 启用 writing-plans skill，创建 MVP 实现计划。
 - 计划分为 13 个 Task，覆盖：枚举定义、Resource 数据类、运行时类、BuffSystem、DamageSystem、ATBSystem、SkillSystem、AIController、BattleManager、测试数据、战斗 UI、集成验证
 - 计划保存到 `docs/superpowers/plans/2026-05-27-mvp-battle-system.md`
+
+---
+
+### [用户]
+选择 Subagent-Driven 执行方式
+
+### [助手]
+启用 subagent-driven-development skill，使用子代理并行执行实现计划。
+
+**执行结果（13 个 Task 全部完成）：**
+- Task 1: 全局枚举（Enums、StatData、ElementChart）— commit 472c9b0
+- Task 2: Resource 数据类（UnitData、SkillData、SkillEffect、BuffData）— commit 231d120
+- Task 3: 装备数据类（EquipData、EquipSetData）— commit 0499716
+- Task 4: 运行时类（Unit、BuffInstance）— commit 6e66a8f
+- Task 5: BuffSystem — commit b835663
+- Task 6: DamageSystem — commit 6a361eb
+- Task 7: ATBSystem — 包含在 Task 4 提交中
+- Task 8: SkillSystem — commit 34e0476
+- Task 9: AIController — commit 37366bb
+- Task 10: BattleManager — commit 11f6198
+- Task 11: TestData 测试数据生成器 — commit cb86749
+- Task 12: 战斗 UI 和场景 — commit 147c38a
+- Task 13: 设置主场景、提交文档、推送到 GitHub — commit 31b0b44
+
+共 12 个 commit，24 个源文件，已全部推送到 GitHub。
