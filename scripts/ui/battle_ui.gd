@@ -1,10 +1,10 @@
 extends Control
 
-@onready var enemy_container: HBoxContainer = $VBoxContainer/EnemyContainer
-@onready var player_container: HBoxContainer = $VBoxContainer/PlayerContainer
-@onready var atb_bar_container: HBoxContainer = $VBoxContainer/ATBBar
-@onready var skill_bar: HBoxContainer = $VBoxContainer/SkillBar
-@onready var target_hint: Label = $VBoxContainer/TargetHint
+@onready var enemy_container: HBoxContainer = $MarginContainer/VBoxContainer/EnemyContainer
+@onready var player_container: HBoxContainer = $MarginContainer/VBoxContainer/PlayerContainer
+@onready var atb_bar_container: HBoxContainer = $MarginContainer/VBoxContainer/ATBBar
+@onready var skill_bar: HBoxContainer = $MarginContainer/VBoxContainer/SkillBar
+@onready var target_hint: Label = $MarginContainer/VBoxContainer/TargetHint
 
 var battle_manager: BattleManager
 var _current_unit: Unit = null
@@ -25,43 +25,54 @@ func create_unit_cards(units: Array[Unit], container: HBoxContainer) -> void:
 		container.add_child(card)
 		_unit_cards[unit] = card
 
-func _create_unit_card(unit: Unit) -> HBoxContainer:
-	var card := HBoxContainer.new()
+func _create_unit_card(unit: Unit) -> VBoxContainer:
+	var card := VBoxContainer.new()
+	card.add_theme_constant_override("separation", 2)
+
 	var name_label := Label.new()
 	name_label.text = unit.data.unit_name
-	name_label.custom_minimum_size.x = 80.0
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
 	var charge_bar := ProgressBar.new()
-	charge_bar.custom_minimum_size.x = 100.0
+	charge_bar.custom_minimum_size = Vector2(120, 12)
 	charge_bar.max_value = 100.0
 	charge_bar.value = 0.0
+	charge_bar.show_percentage = false
+
 	var hp_bar := ProgressBar.new()
+	hp_bar.custom_minimum_size = Vector2(120, 16)
 	hp_bar.max_value = unit.max_hp
 	hp_bar.value = unit.current_hp
-	hp_bar.custom_minimum_size.x = 100.0
+	hp_bar.show_percentage = false
+
 	var hp_label := Label.new()
 	hp_label.text = "%d/%d" % [unit.current_hp, unit.max_hp]
-	hp_label.custom_minimum_size.x = 80.0
+	hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+	card.custom_minimum_size = Vector2(140, 80)
+
 	card.add_child(name_label)
 	card.add_child(charge_bar)
 	card.add_child(hp_bar)
 	card.add_child(hp_label)
-	_bind_card(card, unit, charge_bar, hp_bar, hp_label)
+	_bind_card(unit, hp_bar, hp_label)
 	return card
 
-func _bind_card(card: HBoxContainer, unit: Unit, charge_bar: ProgressBar, hp_bar: ProgressBar, hp_label: Label) -> void:
-	unit.hp_changed.connect(func(u, old_hp, new_hp):
+func _bind_card(unit: Unit, hp_bar: ProgressBar, hp_label: Label) -> void:
+	unit.hp_changed.connect(func(_u, _old_hp, new_hp):
 		hp_bar.value = new_hp
-		hp_label.text = "%d/%d" % [new_hp, u.max_hp]
+		hp_label.text = "%d/%d" % [new_hp, unit.max_hp]
 	)
 
 func _process(_delta: float) -> void:
 	for unit in _unit_cards:
-		var card: HBoxContainer = _unit_cards[unit]
-		if card and card.is_inside_tree():
-			var children := card.get_children()
-			if children.size() >= 2:
-				var cb: ProgressBar = children[1]
-				cb.value = unit.atb_value * 100.0
+		var card: VBoxContainer = _unit_cards[unit]
+		if not card or not card.is_inside_tree():
+			continue
+		var children := card.get_children()
+		if children.size() >= 2:
+			var cb: ProgressBar = children[1]
+			cb.value = unit.atb_value * 100.0
 
 func _on_action_requested(unit: Unit) -> void:
 	_current_unit = unit
@@ -75,6 +86,7 @@ func _show_skills(unit: Unit) -> void:
 	for skill_data in unit.data.skills:
 		var btn := Button.new()
 		btn.text = skill_data.skill_name
+		btn.custom_minimum_size = Vector2(120, 40)
 		var sd: SkillData = skill_data
 		var cd: int = unit.skill_cooldowns.get(sd.id, 0)
 		if cd > 0:
@@ -92,7 +104,7 @@ func _enable_target_selection() -> void:
 	var targets: Array[Unit] = battle_manager.enemy_units if _current_unit.is_player_unit else battle_manager.player_units
 	for target in targets:
 		if target.is_alive and _unit_cards.has(target):
-			var card: HBoxContainer = _unit_cards[target]
+			var card: VBoxContainer = _unit_cards[target]
 			card.gui_input.connect(_on_target_clicked.bind(target))
 
 func _on_target_clicked(event: InputEvent, target: Unit) -> void:
@@ -101,16 +113,16 @@ func _on_target_clicked(event: InputEvent, target: Unit) -> void:
 			battle_manager.player_select_action(_current_unit, _selected_skill, [target])
 			target_hint.text = ""
 
-func _on_action_completed(unit: Unit) -> void:
+func _on_action_completed(_unit: Unit) -> void:
 	_current_unit = null
 	_selected_skill = null
 	for child in skill_bar.get_children():
 		child.queue_free()
 	target_hint.text = ""
 
-func _on_damage_dealt(source: Unit, target: Unit, amount: float, is_crit: bool) -> void:
+func _on_damage_dealt(_source: Unit, target: Unit, amount: float, is_crit: bool) -> void:
 	if _unit_cards.has(target):
-		var card: HBoxContainer = _unit_cards[target]
+		var card: VBoxContainer = _unit_cards[target]
 		var dmg_label := Label.new()
 		dmg_label.set_script(load("res://scripts/ui/damage_number.gd"))
 		card.add_child(dmg_label)
