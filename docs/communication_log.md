@@ -295,3 +295,18 @@ UI 所有内容都在左上方
 
 ### [助手]
 将 ATB 充能速率 BASE_CHARGE_RATE 从 0.06 调至 0.6（10倍加速）。
+
+---
+
+### [用户]
+调整ui，目前还是加载不全，且只显示了右上角
+
+### [助手]
+全面重写 UI 布局：
+- BattleUI 加 `layout_mode=1` 和 `size_flags` 全展开
+- 所有子节点加 `layout_mode=2` 和 `size_flags_horizontal=3`
+- 单位卡片改用 PanelContainer 包裹（有边框背景），尺寸加大至 180×100
+- 充能条颜色区分：己方蓝色、敌方红色；血条绿色
+- 角色名显示元素标签（火/水/风/光/暗）
+- 各区域加标题标签和分隔线
+- MarginContainer 边距加大至 30px
