@@ -68,7 +68,9 @@ func _on_ai_action(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
 
 func _on_unit_ready(unit: Unit) -> void:
 	if not _is_running:
+		push_warning("[BM] unit_ready but not running")
 		return
+	print("[BM] unit_ready: %s (player=%s)" % [unit.data.unit_name, unit.is_player_unit])
 	_current_unit = unit
 	if not unit.is_alive:
 		atb_system.reset_unit(unit)
@@ -91,10 +93,12 @@ func _on_unit_ready(unit: Unit) -> void:
 		ai_controller.request_action(unit, player_units)
 
 func _perform_action(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
+	print("[BM] perform_action: %s uses %s" % [unit.data.unit_name, skill.skill_name])
 	skill_system.execute(unit, skill, targets)
 	_finish_action(unit)
 
 func _finish_action(unit: Unit) -> void:
+	print("[BM] finish_action: %s" % unit.data.unit_name)
 	buff_system.tick_buffs(unit)
 	unit.tick_cooldowns()
 	_check_set_extra_turn(unit)
@@ -104,7 +108,9 @@ func _finish_action(unit: Unit) -> void:
 	_current_unit = null
 	if _check_battle_end():
 		return
+	print("[BM] resuming ATB, queue=%d" % atb_system._ready_queue.size())
 	atb_system.resume()
+	print("[BM] ATB resumed, paused=%s" % atb_system._is_paused)
 
 func _on_unit_died(unit: Unit) -> void:
 	atb_system.remove_unit(unit)

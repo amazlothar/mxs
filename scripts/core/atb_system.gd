@@ -23,6 +23,7 @@ func pause() -> void:
 
 func resume() -> void:
 	_is_paused = false
+	print("[ATB] resume, queue=%d" % _ready_queue.size())
 	if _ready_queue.size() > 0:
 		_emit_next()
 
