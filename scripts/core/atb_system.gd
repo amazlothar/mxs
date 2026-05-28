@@ -4,7 +4,7 @@ class_name ATBSystem
 
 signal unit_ready(unit: Unit)
 
-const BASE_CHARGE_RATE: float = 0.06
+const BASE_CHARGE_RATE: float = 0.6
 const SPD_REFERENCE: float = 100.0
 
 var _units: Array[Unit] = []
