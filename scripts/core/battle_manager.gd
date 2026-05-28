@@ -62,12 +62,10 @@ func start_battle(p_units: Array[UnitData], e_units: Array[UnitData]) -> void:
 func player_select_action(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
 	if not _is_running or _current_unit != unit:
 		return
-	_on_action_selected(unit, skill, targets)
+	_execute_action(unit, skill, targets)
 
 func _on_unit_ready(unit: Unit) -> void:
 	if not _is_running:
-		return
-	if _current_unit != null:
 		return
 	_current_unit = unit
 	if not unit.is_alive:
@@ -91,6 +89,9 @@ func _on_unit_ready(unit: Unit) -> void:
 		ai_controller.request_action(unit, player_units)
 
 func _on_action_selected(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
+	_execute_action(unit, skill, targets)
+
+func _execute_action(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
 	skill_system.execute(unit, skill, targets)
 
 func _on_skill_executed(unit: Unit, _skill: SkillData, _targets: Array[Unit]) -> void:

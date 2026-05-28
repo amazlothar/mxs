@@ -1,4 +1,3 @@
-# scripts/core/skill_system.gd
 extends Node
 class_name SkillSystem
 
