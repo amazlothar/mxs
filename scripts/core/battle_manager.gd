@@ -1,4 +1,3 @@
-# scripts/core/battle_manager.gd
 extends Node
 class_name BattleManager
 
@@ -66,9 +65,14 @@ func player_select_action(unit: Unit, skill: SkillData, targets: Array[Unit]) ->
 	_on_action_selected(unit, skill, targets)
 
 func _on_unit_ready(unit: Unit) -> void:
+	if not _is_running:
+		return
+	if _current_unit != null:
+		return
 	_current_unit = unit
 	if not unit.is_alive:
 		atb_system.reset_unit(unit)
+		_current_unit = null
 		atb_system.resume()
 		return
 	var has_control: bool = false
@@ -78,6 +82,7 @@ func _on_unit_ready(unit: Unit) -> void:
 			break
 	if has_control:
 		atb_system.reset_unit(unit)
+		_current_unit = null
 		atb_system.resume()
 		return
 	if unit.is_player_unit:
@@ -88,15 +93,16 @@ func _on_unit_ready(unit: Unit) -> void:
 func _on_action_selected(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
 	skill_system.execute(unit, skill, targets)
 
-func _on_skill_executed(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
+func _on_skill_executed(unit: Unit, _skill: SkillData, _targets: Array[Unit]) -> void:
 	buff_system.tick_buffs(unit)
 	unit.tick_cooldowns()
 	_check_set_extra_turn(unit)
 	action_completed.emit(unit)
+	if unit.is_alive:
+		atb_system.reset_unit(unit)
 	_current_unit = null
 	if _check_battle_end():
 		return
-	atb_system.reset_unit(unit)
 	atb_system.resume()
 
 func _on_unit_died(unit: Unit) -> void:
