@@ -37,8 +37,7 @@ func _ready() -> void:
 	damage_system.buff_system = buff_system
 
 	atb_system.unit_ready.connect(_on_unit_ready)
-	skill_system.skill_executed.connect(_on_skill_executed)
-	ai_controller.action_selected.connect(_on_action_selected)
+	ai_controller.action_selected.connect(_on_ai_action)
 	damage_system.unit_died.connect(_on_unit_died)
 
 func start_battle(p_units: Array[UnitData], e_units: Array[UnitData]) -> void:
@@ -62,7 +61,10 @@ func start_battle(p_units: Array[UnitData], e_units: Array[UnitData]) -> void:
 func player_select_action(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
 	if not _is_running or _current_unit != unit:
 		return
-	_execute_action(unit, skill, targets)
+	_perform_action(unit, skill, targets)
+
+func _on_ai_action(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
+	_perform_action(unit, skill, targets)
 
 func _on_unit_ready(unit: Unit) -> void:
 	if not _is_running:
@@ -73,7 +75,7 @@ func _on_unit_ready(unit: Unit) -> void:
 		_current_unit = null
 		atb_system.resume()
 		return
-	var has_control: bool = false
+	var has_control := false
 	for b in unit.buff_container:
 		if b.data.effect_type == Enums.BuffEffectType.CONTROL:
 			has_control = true
@@ -88,13 +90,11 @@ func _on_unit_ready(unit: Unit) -> void:
 	else:
 		ai_controller.request_action(unit, player_units)
 
-func _on_action_selected(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
-	_execute_action(unit, skill, targets)
-
-func _execute_action(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
+func _perform_action(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
 	skill_system.execute(unit, skill, targets)
+	_finish_action(unit)
 
-func _on_skill_executed(unit: Unit, _skill: SkillData, _targets: Array[Unit]) -> void:
+func _finish_action(unit: Unit) -> void:
 	buff_system.tick_buffs(unit)
 	unit.tick_cooldowns()
 	_check_set_extra_turn(unit)
@@ -118,8 +118,8 @@ func _check_set_extra_turn(unit: Unit) -> void:
 					unit.atb_value = 1.0
 
 func _check_battle_end() -> bool:
-	var player_alive: bool = false
-	var enemy_alive: bool = false
+	var player_alive := false
+	var enemy_alive := false
 	for u in player_units:
 		if u.is_alive:
 			player_alive = true

@@ -1,8 +1,6 @@
 extends Node
 class_name SkillSystem
 
-signal skill_executed(unit: Unit, skill: SkillData, targets: Array[Unit])
-
 var damage_system: DamageSystem
 var buff_system: BuffSystem
 var atb_system: ATBSystem
@@ -35,4 +33,3 @@ func execute(unit: Unit, skill: SkillData, targets: Array[Unit]) -> void:
 					atb_system.modify_atb(target, effect.atb_modify)
 	if skill.cooldown > 0:
 		unit.set_cooldown(skill.id, skill.cooldown)
-	skill_executed.emit(unit, skill, targets)
