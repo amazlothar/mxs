@@ -1,15 +1,89 @@
 extends Control
 
-@onready var enemy_container: HBoxContainer = $MarginContainer/VBoxContainer/EnemyContainer
-@onready var player_container: HBoxContainer = $MarginContainer/VBoxContainer/PlayerContainer
-@onready var atb_bar_container: HBoxContainer = $MarginContainer/VBoxContainer/ATBBar
-@onready var skill_bar: HBoxContainer = $MarginContainer/VBoxContainer/SkillBar
-@onready var target_hint: Label = $MarginContainer/VBoxContainer/TargetHint
+var enemy_container: HBoxContainer
+var player_container: HBoxContainer
+var atb_bar_container: HBoxContainer
+var skill_bar: HBoxContainer
+var target_hint: Label
 
 var battle_manager: BattleManager
 var _current_unit: Unit = null
 var _selected_skill: SkillData = null
 var _unit_cards: Dictionary = {}
+
+func _ready() -> void:
+	anchors_preset = Control.PRESET_FULL_RECT
+	anchor_right = 1.0
+	anchor_bottom = 1.0
+	size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	var margin := MarginContainer.new()
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	margin.anchor_right = 1.0
+	margin.anchor_bottom = 1.0
+	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin.add_theme_constant_override("margin_left", 30)
+	margin.add_theme_constant_override("margin_top", 30)
+	margin.add_theme_constant_override("margin_right", 30)
+	margin.add_theme_constant_override("margin_bottom", 30)
+	add_child(margin)
+
+	var vbox := VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	vbox.anchor_right = 1.0
+	vbox.anchor_bottom = 1.0
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_theme_constant_override("separation", 16)
+	margin.add_child(vbox)
+
+	vbox.add_child(_make_label("=== 战 斗 ===", HORIZONTAL_ALIGNMENT_CENTER))
+
+	vbox.add_child(_make_label("--- 敌方 ---", HORIZONTAL_ALIGNMENT_CENTER))
+	enemy_container = _make_hbox()
+	vbox.add_child(enemy_container)
+
+	vbox.add_child(_make_separator())
+
+	vbox.add_child(_make_label("--- 行动条 ---", HORIZONTAL_ALIGNMENT_CENTER))
+	atb_bar_container = _make_hbox()
+	vbox.add_child(atb_bar_container)
+
+	vbox.add_child(_make_separator())
+
+	vbox.add_child(_make_label("--- 我方 ---", HORIZONTAL_ALIGNMENT_CENTER))
+	player_container = _make_hbox()
+	vbox.add_child(player_container)
+
+	vbox.add_child(_make_separator())
+
+	vbox.add_child(_make_label("--- 技能 ---", HORIZONTAL_ALIGNMENT_CENTER))
+	skill_bar = _make_hbox()
+	vbox.add_child(skill_bar)
+
+	target_hint = _make_label("", HORIZONTAL_ALIGNMENT_CENTER)
+	vbox.add_child(target_hint)
+
+func _make_label(text: String, align: HorizontalAlignment) -> Label:
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.horizontal_alignment = align
+	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return lbl
+
+func _make_hbox() -> HBoxContainer:
+	var hbox := HBoxContainer.new()
+	hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	hbox.add_theme_constant_override("separation", 16)
+	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return hbox
+
+func _make_separator() -> HSeparator:
+	var sep := HSeparator.new()
+	sep.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return sep
 
 func setup(bm: BattleManager) -> void:
 	battle_manager = bm
@@ -28,6 +102,7 @@ func create_unit_cards(units: Array[Unit], container: HBoxContainer) -> void:
 func _create_unit_card(unit: Unit) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.custom_minimum_size = Vector2(180, 100)
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	var card := VBoxContainer.new()
 	card.add_theme_constant_override("separation", 4)

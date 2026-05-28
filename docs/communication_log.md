@@ -310,3 +310,23 @@ UI 所有内容都在左上方
 - 角色名显示元素标签（火/水/风/光/暗）
 - 各区域加标题标签和分隔线
 - MarginContainer 边距加大至 30px
+
+---
+
+### [用户]
+报错 gui_input 信号重复连接
+
+### [助手]
+在 `_enable_target_selection` 中加入 `is_connected` 检查，避免重复连接。— commit 321c2f7
+
+---
+
+### [用户]
+再次修复 UI 显示
+
+### [助手]
+UI 全面改为代码构建（不再依赖 .tscn 中的节点树）：
+- `battle_ui.gd` 在 `_ready()` 中用代码创建全部 UI 结构（MarginContainer → VBoxContainer → 各区域）
+- `.tscn` 简化为仅 3 个根节点（BattleScene、BattleManager、BattleUI），无子节点
+- 所有布局属性在代码中设置 `anchors_preset`、`size_flags`、`alignment`
+- 消除 @onready 路径依赖问题
