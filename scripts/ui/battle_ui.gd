@@ -126,7 +126,8 @@ func _enable_target_selection() -> void:
 	for target in targets:
 		if target.is_alive and _unit_cards.has(target):
 			var card: PanelContainer = _unit_cards[target]
-			card.gui_input.connect(_on_target_clicked.bind(target))
+			if not card.gui_input.is_connected(_on_target_clicked.bind(target)):
+				card.gui_input.connect(_on_target_clicked.bind(target))
 
 func _on_target_clicked(event: InputEvent, target: Unit) -> void:
 	if event is InputEventMouseButton and event.pressed:
